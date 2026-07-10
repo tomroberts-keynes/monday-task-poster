@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Task Poster</title>
+<style>
+  :root {
+    --ink: #14171c;
+    --paper: #f6f5f1;
+    --line: #d8d5cc;
+    --accent: #2c5f4f;
+    --accent-soft: #e4ede9;
+    --error: #b3432b;
+    --mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    display: flex;
+    justify-content: center;
+    padding: 48px 20px;
+  }
+
+  .sheet { width: 100%; max-width: 620px; }
+
+  .ticket-number {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 4px; }
+  .subhead { color: #5b5f66; font-size: 14px; margin: 0 0 32px; }
+
+  form { border: 1px solid var(--line); background: #fff; border-radius: 4px; }
+
+  .row { border-bottom: 1px solid var(--line); padding: 18px 22px; }
+  .row:last-of-type { border-bottom: none; }
+  .row.hidden { display: none; }
+
+  label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #6b6f76;
+    margin-bottom: 8px;
+  }
+
+  select, input[type="date"], input[type="text"], textarea {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 10px 12px;
+    font-size: 15px;
+    font-family: var(--sans);
+    color: var(--ink);
+    background: #fff;
+    appearance: none;
+  }
+
+  textarea {
+    min-height: 76px;
+    overflow-y: hidden;
+    line-height: 1.4;
+  }
+
+  textarea.large {
+    min-height: 220px;
+  }
+
+  select:disabled { background: #f1efe9; color: #9a9da2; cursor: not-allowed; }
+
+  select {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8"><path d="M1 1l5 5 5-5" stroke="%235b5f66" stroke-width="1.5" fill="none"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 34px;
+  }
+
+  select:focus, input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+
+  .template-note {
+    font-size: 12.5px;
+    color: #6b6f76;
+    font-style: italic;
+    margin: -4px 0 14px;
+  }
+
+  .field-group { display: flex; flex-direction: column; gap: 16px; }
+  .field-group .field label { margin-bottom: 6px; }
+
+  .actions { padding: 20px 22px 22px; }
+
+  button {
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    padding: 13px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  button:hover { background: #234c3f; }
+  button:disabled { background: #a9b3ae; cursor: not-allowed; }
+
+  .status {
+    margin-top: 16px;
+    font-size: 14px;
+    padding: 12px 14px;
+    border-radius: 3px;
+    display: none;
+  }
+  .status.show { display: block; }
+  .status.ok { background: var(--accent-soft); color: var(--accent); }
+  .status.err { background: #f7e4de; color: var(--error); }
+</style>
+</head>
+<body>
+  <div class="sheet">
+    <div class="ticket-number" id="ticketNumber">TICKET —</div>
+    <h1>New task request</h1>
+    <p class="subhead">Pick the client and item, then the matching template. Fields adjust to whichever template you choose.</p>
+
+    <form id="taskForm">
+      <div class="row">
+        <label for="client">Client</label>
+        <select id="client" required><option value="">Loading clients…</option></select>
+      </div>
+      <div class="row">
+        <label for="itemSelect">Item</label>
+        <select id="itemSelect" required disabled><option value="">Select a client first</option></select>
+      </div>
+      <div class="row" id="templateRow" style="display:none;">
+        <label for="templateSelect">Template</label>
+        <select id="templateSelect" required></select>
+        <div class="template-note" id="templateNote"></div>
+      </div>
+      <div class="row" id="fieldsRow" style="display:none;">
+        <div class="field-group" id="fieldsContainer"></div>
+      </div>
+      <div class="row">
+        <label for="assignee">Assignee</label>
+        <select id="assignee" required><option value="">Loading team…</option></select>
+      </div>
+      <div class="row">
+        <label for="dueDate">Due date</label>
+        <input type="date" id="dueDate" required />
+      </div>
+      <div class="actions">
+        <button type="submit" id="submitBtn">Post to Monday</button>
+        <div class="status" id="statusBox"></div>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const clientSelect = document.getElementById('client');
+    const itemSelect = document.getElementById('itemSelect');
+    const templateRow = document.getElementById('templateRow');
+    const templateSelect = document.getElementById('templateSelect');
+    const templateNote = document.getElementById('templateNote');
+    const fieldsRow = document.getElementById('fieldsRow');
+    const fieldsContainer = document.getElementById('fieldsContainer');
+    const assigneeSelect = document.getElementById('assignee');
+    const dueDateInput = document.getElementById('dueDate');
+    const form = document.getElementById('taskForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const statusBox = document.getElementById('statusBox');
+    const ticketNumber = document.getElementById('ticketNumber');
+
+    let categories = {};
+    let customTemplate = null;
+    let currentCategoryKey = null;
+
+    function autoGrow(el) {
+      el.style.height = 'auto';
+      el.style.height = el.scrollHeight + 'px';
+    }
+
+    ticketNumber.textContent = 'TICKET — ' + new Date().toISOString().slice(0, 10).replace(/-/g, '');
+
+    function fillSelect(select, items, placeholder) {
+      select.innerHTML = '';
+      const empty = document.createElement('option');
+      empty.value = '';
+      empty.textContent = placeholder;
+      select.appendChild(empty);
+      items.forEach((item) => {
+        const opt = document.createElement('option');
+        opt.value = item.id;
+        opt.textContent = item.label;
+        select.appendChild(opt);
+      });
+    }
+
+    function showStatus(kind, html) {
+      statusBox.className = 'status show ' + kind;
+      statusBox.innerHTML = html;
+    }
+
+    async function loadMetadata() {
+      try {
+        const res = await fetch('/api/get-metadata');
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to load form data');
+
+        categories = data.categories;
+        customTemplate = data.customTemplate;
+
+        fillSelect(
+          clientSelect,
+          data.clients.map((c) => ({ id: c.id, label: c.title })),
+          'Select a client'
+        );
+        fillSelect(
+          assigneeSelect,
+          data.assignees.map((u) => ({ id: u.id, label: u.name })),
+          'Select an assignee'
+        );
+      } catch (err) {
+        showStatus('err', 'Could not load form data: ' + err.message);
+      }
+    }
+
+    function detectCategory(itemName) {
+      for (const [key, cat] of Object.entries(categories)) {
+        if (itemName.toLowerCase().includes(cat.matchKeyword.toLowerCase())) {
+          return key;
+        }
+      }
+      return null;
+    }
+
+    async function loadItemsForClient(groupId) {
+      itemSelect.disabled = true;
+      fillSelect(itemSelect, [], 'Loading items…');
+      templateRow.style.display = 'none';
+      fieldsRow.style.display = 'none';
+      if (!groupId) {
+        fillSelect(itemSelect, [], 'Select a client first');
+        return;
+      }
+      try {
+        const res = await fetch('/api/get-client-items?groupId=' + encodeURIComponent(groupId));
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to load items');
+
+        fillSelect(
+          itemSelect,
+          data.items.map((i) => ({ id: i.id, label: i.name })),
+          'Select an item'
+        );
+        itemSelect.disabled = false;
+      } catch (err) {
+        showStatus('err', 'Could not load items for that client: ' + err.message);
+      }
+    }
+
+    function getTemplatesForCategory(categoryKey) {
+      if (categoryKey && categories[categoryKey]) {
+        return categories[categoryKey].templates;
+      }
+      return [customTemplate];
+    }
+
+    function renderTemplateOptions() {
+      const itemOption = itemSelect.options[itemSelect.selectedIndex];
+      if (!itemOption || !itemOption.value) {
+        templateRow.style.display = 'none';
+        fieldsRow.style.display = 'none';
+        return;
+      }
+      currentCategoryKey = detectCategory(itemOption.textContent);
+      const tmpls = getTemplatesForCategory(currentCategoryKey);
+
+      templateSelect.innerHTML = '';
+      tmpls.forEach((t) => {
+        const opt = document.createElement('option');
+        opt.value = t.key;
+        opt.textContent = t.label;
+        templateSelect.appendChild(opt);
+      });
+      templateRow.style.display = 'block';
+      renderFields();
+    }
+
+    function currentTemplate() {
+      const tmpls = getTemplatesForCategory(currentCategoryKey);
+      return tmpls.find((t) => t.key === templateSelect.value) || tmpls[0];
+    }
+
+    function renderFields() {
+      const template = currentTemplate();
+      fieldsContainer.innerHTML = '';
+      templateNote.textContent = template && template.assigneeNote ? template.assigneeNote : '';
+
+      const fields = template ? template.fields : [];
+      if (!fields || fields.length === 0) {
+        fieldsRow.style.display = 'none';
+        return;
+      }
+      fieldsRow.style.display = 'block';
+      fields.forEach((f) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'field';
+        const lbl = document.createElement('label');
+        lbl.textContent = f.label;
+        lbl.setAttribute('for', 'field_' + f.id);
+        wrap.appendChild(lbl);
+
+        const input = document.createElement(f.type === 'textarea' ? 'textarea' : 'input');
+        if (f.type !== 'textarea') {
+          input.type = 'text';
+        } else {
+          if (f.size === 'large') input.classList.add('large');
+          input.rows = f.size === 'large' ? 8 : 2;
+          input.addEventListener('input', () => autoGrow(input));
+        }
+        input.id = 'field_' + f.id;
+        input.name = f.id;
+        wrap.appendChild(input);
+
+        fieldsContainer.appendChild(wrap);
+        if (f.type === 'textarea') requestAnimationFrame(() => autoGrow(input));
+      });
+    }
+
+    clientSelect.addEventListener('change', () => loadItemsForClient(clientSelect.value));
+    itemSelect.addEventListener('change', renderTemplateOptions);
+    templateSelect.addEventListener('change', renderFields);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Posting…';
+      statusBox.className = 'status';
+
+      const template = currentTemplate();
+      const fieldValues = {};
+      (template && template.fields ? template.fields : []).forEach((f) => {
+        const el = document.getElementById('field_' + f.id);
+        if (el) fieldValues[f.id] = el.value;
+      });
+
+      try {
+        const res = await fetch('/api/create-task', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            parentItemId: itemSelect.value,
+            categoryKey: currentCategoryKey,
+            templateKey: template ? template.key : 'custom',
+            templateLabel: template ? template.label : 'New task',
+            fields: fieldValues,
+            assigneeId: assigneeSelect.value,
+            dueDate: dueDateInput.value,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Something went wrong');
+
+        showStatus('ok', 'Posted subitem: <strong>' + data.item.name + '</strong>');
+        assigneeSelect.selectedIndex = 0;
+        dueDateInput.value = '';
+        renderFields();
+      } catch (err) {
+        showStatus('err', 'Failed to post task: ' + err.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Post to Monday';
+      }
+    });
+
+    loadMetadata();
+  </script>
+</body>
+</html>
