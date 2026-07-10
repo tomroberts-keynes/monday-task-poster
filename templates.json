@@ -1,0 +1,482 @@
+{
+  "categories": {
+    "optimizations": {
+      "matchKeyword": "Optimizations",
+      "label": "Optimizations",
+      "templates": [
+        {
+          "key": "custom",
+          "label": "Custom ticket",
+          "fields": []
+        }
+      ]
+    },
+    "client_tasks": {
+      "matchKeyword": "Client Tasks",
+      "label": "Client Tasks",
+      "templates": [
+        {
+          "key": "new_campaign_relaunch",
+          "label": "Relaunch or New Campaign",
+          "assigneeNote": "AM to assign to PA.",
+          "fields": [
+            {
+              "id": "advertiser_name",
+              "label": "Advertiser Name",
+              "type": "textarea"
+            },
+            {
+              "id": "flight_dates",
+              "label": "Flight Dates",
+              "type": "textarea"
+            },
+            {
+              "id": "channels",
+              "label": "Channels",
+              "type": "textarea"
+            },
+            {
+              "id": "campaign_names",
+              "label": "Campaign Names",
+              "type": "textarea"
+            },
+            {
+              "id": "budgets_note",
+              "label": "Budgets (note: a separate Budget ticket is required)",
+              "type": "textarea"
+            },
+            {
+              "id": "relaunch_io",
+              "label": "Relaunch IO (attach link)",
+              "type": "textarea"
+            },
+            {
+              "id": "creatives",
+              "label": "Creatives (new = separate Creative ticket; existing = note here + correct UTMs)",
+              "type": "textarea"
+            },
+            {
+              "id": "goals",
+              "label": "Goals",
+              "type": "textarea"
+            },
+            {
+              "id": "reporting_source_of_truth",
+              "label": "Reporting Source of Truth",
+              "type": "textarea"
+            },
+            {
+              "id": "attribution_window",
+              "label": "Attribution Window",
+              "type": "textarea"
+            },
+            {
+              "id": "geos",
+              "label": "Geos",
+              "type": "textarea"
+            },
+            {
+              "id": "automated_report",
+              "label": "Automated Report? (Yes/No + link if yes)",
+              "type": "textarea"
+            },
+            {
+              "id": "setup_notes",
+              "label": "Setup Notes",
+              "type": "textarea"
+            },
+            {
+              "id": "sales_partner",
+              "label": "Sales Partner"
+            }
+          ]
+        },
+        {
+          "key": "client_pause",
+          "label": "Client Pause",
+          "assigneeNote": "PA to action the pause, then assign to AD.",
+          "fields": [
+            {
+              "id": "pause_reason",
+              "label": "Pause Reason",
+              "type": "textarea"
+            },
+            {
+              "id": "anticipated_relaunch",
+              "label": "Anticipated Relaunch",
+              "type": "textarea"
+            },
+            {
+              "id": "next_steps",
+              "label": "Next Steps",
+              "type": "textarea"
+            }
+          ]
+        },
+        {
+          "key": "custom",
+          "label": "Custom ticket",
+          "fields": []
+        }
+      ]
+    },
+    "creative_changes": {
+      "matchKeyword": "Creative Changes",
+      "label": "Creative Changes",
+      "templates": [
+        {
+          "key": "new_launch_relaunch",
+          "label": "New Launch / Relaunch",
+          "assigneeNote": "TAs + Activations assigned for New Launches; TAs only for relaunches/pauses.",
+          "fields": [
+            {
+              "id": "creative_links",
+              "label": "Creative Messages / Links to Ads",
+              "type": "textarea"
+            },
+            {
+              "id": "urls_utms",
+              "label": "URLs / UTMs",
+              "type": "textarea"
+            },
+            {
+              "id": "additional_tags",
+              "label": "Additional Tags (rockerbox, etc.)",
+              "type": "textarea"
+            },
+            {
+              "id": "flight_date",
+              "label": "Flight Date",
+              "type": "textarea"
+            },
+            {
+              "id": "associated_campaigns",
+              "label": "Associated Campaigns",
+              "type": "textarea"
+            },
+            {
+              "id": "weighting",
+              "label": "Weighting (list exactly what ads should be live)",
+              "type": "textarea"
+            },
+            {
+              "id": "ads_back_live",
+              "label": "Ads to go back live once flight concludes",
+              "type": "textarea"
+            },
+            {
+              "id": "creatives_not_returning",
+              "label": "Previously scheduled creatives no longer going back live?",
+              "type": "textarea"
+            }
+          ]
+        },
+        {
+          "key": "creative_pause",
+          "label": "Creative Pause Request",
+          "assigneeNote": "AM to assign to TA only.",
+          "fields": [
+            {
+              "id": "campaign_names",
+              "label": "Campaign Name(s)",
+              "type": "textarea"
+            },
+            {
+              "id": "creative_names_to_pause",
+              "label": "Creative Name(s) to Pause",
+              "type": "textarea"
+            },
+            {
+              "id": "date_to_pause",
+              "label": "Date to Pause",
+              "type": "textarea"
+            },
+            {
+              "id": "creatives_to_stay_live",
+              "label": "Creative(s) to Stay Live",
+              "type": "textarea"
+            }
+          ]
+        },
+        {
+          "key": "custom",
+          "label": "Custom ticket",
+          "fields": []
+        }
+      ]
+    },
+    "budgets": {
+      "matchKeyword": "Budgets",
+      "label": "Budgets | PREPAY | ARN",
+      "templates": [
+        {
+          "key": "new_client_budget",
+          "label": "New Client \u2014 First Budget Ticket",
+          "assigneeNote": "AM to assign ticket to PA and Ren. Also paste into the item's Info Box, not just Updates.",
+          "fields": [
+            {
+              "id": "client_name",
+              "label": "Client Name"
+            },
+            {
+              "id": "channel",
+              "label": "Channel",
+              "type": "textarea"
+            },
+            {
+              "id": "budget",
+              "label": "Budget",
+              "type": "textarea"
+            },
+            {
+              "id": "flight_dates",
+              "label": "Flight Dates",
+              "type": "textarea"
+            },
+            {
+              "id": "recipients",
+              "label": "Recipients",
+              "type": "textarea"
+            },
+            {
+              "id": "client_address",
+              "label": "Client Physical Address",
+              "type": "textarea"
+            },
+            {
+              "id": "terms",
+              "label": "Terms"
+            },
+            {
+              "id": "sales_partner",
+              "label": "Sales Partner"
+            }
+          ]
+        },
+        {
+          "key": "monthly_budget",
+          "label": "Monthly Budget (Existing Client)",
+          "assigneeNote": "AM to assign ticket to PA and Ren.",
+          "fields": [
+            {
+              "id": "advertiser_name",
+              "label": "Advertiser Name",
+              "type": "textarea"
+            },
+            {
+              "id": "billing_dates",
+              "label": "Billing Dates",
+              "type": "textarea"
+            },
+            {
+              "id": "channels",
+              "label": "Channels",
+              "type": "textarea"
+            },
+            {
+              "id": "budget_total",
+              "label": "Budget: Total",
+              "type": "textarea"
+            },
+            {
+              "id": "budget_by_campaign",
+              "label": "Budget: By Campaign (if applicable)",
+              "type": "textarea"
+            },
+            {
+              "id": "prepay_or_net",
+              "label": "Prepay or Net",
+              "type": "textarea"
+            },
+            {
+              "id": "sales_partner",
+              "label": "Sales Partner"
+            },
+            {
+              "id": "notes",
+              "label": "Notes",
+              "type": "textarea"
+            }
+          ]
+        },
+        {
+          "key": "monthly_budget_multi_invoice",
+          "label": "Monthly Budget (Multiple Invoices)",
+          "assigneeNote": "AM to assign ticket to PA and Ren.",
+          "fields": [
+            {
+              "id": "advertiser_name",
+              "label": "Advertiser Name",
+              "type": "textarea"
+            },
+            {
+              "id": "billing_dates",
+              "label": "Billing Dates",
+              "type": "textarea"
+            },
+            {
+              "id": "channels",
+              "label": "Channels",
+              "type": "textarea"
+            },
+            {
+              "id": "budget_total",
+              "label": "Budget: Total",
+              "type": "textarea"
+            },
+            {
+              "id": "budget_by_campaign",
+              "label": "Budget: By Campaign (if applicable)",
+              "type": "textarea"
+            },
+            {
+              "id": "prepay_or_net",
+              "label": "Prepay or Net",
+              "type": "textarea"
+            },
+            {
+              "id": "sales_partner",
+              "label": "Sales Partner"
+            },
+            {
+              "id": "notes",
+              "label": "Notes",
+              "type": "textarea"
+            },
+            {
+              "id": "invoice1_amount",
+              "label": "Invoice #1 \u2014 Amount",
+              "type": "textarea"
+            },
+            {
+              "id": "invoice1_due",
+              "label": "Invoice #1 \u2014 Due Date",
+              "type": "textarea"
+            },
+            {
+              "id": "invoice2_amount",
+              "label": "Invoice #2 \u2014 Amount",
+              "type": "textarea"
+            },
+            {
+              "id": "invoice2_due",
+              "label": "Invoice #2 \u2014 Due Date",
+              "type": "textarea"
+            },
+            {
+              "id": "invoice3_amount",
+              "label": "Invoice #3 \u2014 Amount",
+              "type": "textarea"
+            },
+            {
+              "id": "invoice3_due",
+              "label": "Invoice #3 \u2014 Due Date",
+              "type": "textarea"
+            },
+            {
+              "id": "invoice4_amount",
+              "label": "Invoice #4 \u2014 Amount",
+              "type": "textarea"
+            },
+            {
+              "id": "invoice4_due",
+              "label": "Invoice #4 \u2014 Due Date",
+              "type": "textarea"
+            }
+          ]
+        },
+        {
+          "key": "incremental_budget",
+          "label": "Incremental Budget (Mid-Flight)",
+          "assigneeNote": "AM to assign ticket to PA + Dani (for QA) and Ren. Note at the top of the ticket that this is incremental.",
+          "fields": [
+            {
+              "id": "incremental_budget",
+              "label": "Incremental Budget",
+              "type": "textarea"
+            },
+            {
+              "id": "flight_dates",
+              "label": "Flight Dates",
+              "type": "textarea"
+            },
+            {
+              "id": "channels",
+              "label": "Channels (if specified)",
+              "type": "textarea"
+            },
+            {
+              "id": "creatives",
+              "label": "Creatives (if specified)",
+              "type": "textarea"
+            },
+            {
+              "id": "audiences",
+              "label": "Audiences (if specified)",
+              "type": "textarea"
+            },
+            {
+              "id": "campaigns",
+              "label": "Campaigns (if specified)",
+              "type": "textarea"
+            },
+            {
+              "id": "notes",
+              "label": "Notes",
+              "type": "textarea"
+            }
+          ]
+        },
+        {
+          "key": "invoice_bug_credit",
+          "label": "Invoice Credit (Bug Impact)",
+          "assigneeNote": "Prepay: credit reflects on next month's invoice for the following month's services. Net: credit reflects on next month's invoice for the previous (impacted) month's services. Already sent/paid invoices are not revised.",
+          "fields": [
+            {
+              "id": "client_type",
+              "label": "Prepay or Net",
+              "type": "textarea"
+            },
+            {
+              "id": "full_campaign_budget",
+              "label": "Full Campaign Budget Amount",
+              "type": "textarea"
+            },
+            {
+              "id": "credit_amount",
+              "label": "Credit Amount",
+              "type": "textarea"
+            },
+            {
+              "id": "amount_to_be_paid",
+              "label": "Amount to Be Paid (full campaign \u2212 credit)",
+              "type": "textarea"
+            },
+            {
+              "id": "notes",
+              "label": "Notes",
+              "type": "textarea"
+            }
+          ]
+        },
+        {
+          "key": "custom",
+          "label": "Custom ticket",
+          "fields": []
+        }
+      ]
+    }
+  },
+  "customTemplate": {
+    "key": "custom",
+    "label": "Custom ticket",
+    "fields": [
+      {
+        "id": "details",
+        "label": "Details",
+        "type": "textarea",
+        "size": "large"
+      }
+    ]
+  }
+}

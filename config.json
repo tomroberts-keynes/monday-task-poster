@@ -1,0 +1,15 @@
+{
+  "boardId": 3326350648,
+  "subitemColumnIds": {
+    "assignee": "people6",
+    "dueDate": "due_date3",
+    "status": "status3"
+  },
+  "parentItemColumnIds": {
+    "assignee": "people",
+    "submissionDate": "date",
+    "dueDate": "date49",
+    "status": "status6"
+  },
+  "defaultStatus": "Backlog"
+}
