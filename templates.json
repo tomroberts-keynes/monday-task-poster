@@ -7,7 +7,14 @@
         {
           "key": "custom",
           "label": "Custom ticket",
-          "fields": []
+          "fields": [
+            {
+              "id": "details",
+              "label": "Details",
+              "type": "textarea",
+              "size": "large"
+            }
+          ]
         }
       ]
     },
@@ -116,7 +123,14 @@
         {
           "key": "custom",
           "label": "Custom ticket",
-          "fields": []
+          "fields": [
+            {
+              "id": "details",
+              "label": "Details",
+              "type": "textarea",
+              "size": "large"
+            }
+          ]
         }
       ]
     },
@@ -201,7 +215,14 @@
         {
           "key": "custom",
           "label": "Custom ticket",
-          "fields": []
+          "fields": [
+            {
+              "id": "details",
+              "label": "Details",
+              "type": "textarea",
+              "size": "large"
+            }
+          ]
         }
       ]
     },
@@ -462,7 +483,14 @@
         {
           "key": "custom",
           "label": "Custom ticket",
-          "fields": []
+          "fields": [
+            {
+              "id": "details",
+              "label": "Details",
+              "type": "textarea",
+              "size": "large"
+            }
+          ]
         }
       ]
     }
