@@ -51,7 +51,6 @@ exports.handler = async function (event) {
       parentItemId,
       categoryKey,
       templateKey,
-      templateLabel,
       fields,
       assigneeId,
       dueDate,
@@ -62,35 +61,6 @@ exports.handler = async function (event) {
     }
 
     const template = findTemplate(categoryKey, templateKey);
-    const subitemName = templateLabel || (template && template.label) || 'New task';
-
-    const columnValues = {
-      [config.subitemColumnIds.assignee]: { personsAndTeams: [{ id: Number(assigneeId), kind: 'person' }] },
-      [config.subitemColumnIds.dueDate]: { date: dueDate },
-      [config.subitemColumnIds.status]: { label: config.defaultStatus },
-    };
-
-    const created = await mondayQuery(
-      `mutation ($parentItemId: ID!, $itemName: String!, $columnValues: JSON) {
-        create_subitem(
-          parent_item_id: $parentItemId
-          item_name: $itemName
-          column_values: $columnValues
-          create_labels_if_missing: true
-        ) {
-          id
-          name
-          board { id }
-        }
-      }`,
-      {
-        parentItemId,
-        itemName: subitemName,
-        columnValues: JSON.stringify(columnValues),
-      }
-    );
-
-    const newItemId = created.create_subitem.id;
 
     let updateBody;
     if (templateKey === 'custom') {
@@ -101,23 +71,25 @@ exports.handler = async function (event) {
       updateBody = '';
     }
 
-    if (updateBody) {
-      await mondayQuery(
-        `mutation ($itemId: ID!, $body: String!) {
-          create_update(item_id: $itemId, body: $body) {
-            id
-          }
-        }`,
-        { itemId: newItemId, body: updateBody }
-      );
+    if (!updateBody) {
+      return { statusCode: 400, body: JSON.stringify({ error: 'No update content to post' }) };
     }
 
+    await mondayQuery(
+      `mutation ($itemId: ID!, $body: String!) {
+        create_update(item_id: $itemId, body: $body) {
+          id
+        }
+      }`,
+      { itemId: parentItemId, body: updateBody }
+    );
+
     const today = new Date().toISOString().slice(0, 10);
-    const parentColumnValues = {
-      [config.parentItemColumnIds.assignee]: { personsAndTeams: [{ id: Number(assigneeId), kind: 'person' }] },
-      [config.parentItemColumnIds.submissionDate]: { date: today },
-      [config.parentItemColumnIds.dueDate]: { date: dueDate },
-      [config.parentItemColumnIds.status]: { label: config.defaultStatus },
+    const columnValues = {
+      [config.itemColumnIds.assignee]: { personsAndTeams: [{ id: Number(assigneeId), kind: 'person' }] },
+      [config.itemColumnIds.submissionDate]: { date: today },
+      [config.itemColumnIds.dueDate]: { date: dueDate },
+      [config.itemColumnIds.status]: { label: config.defaultStatus },
     };
 
     await mondayQuery(
@@ -129,19 +101,20 @@ exports.handler = async function (event) {
           create_labels_if_missing: true
         ) {
           id
+          name
         }
       }`,
       {
         boardId: config.boardId,
         itemId: parentItemId,
-        columnValues: JSON.stringify(parentColumnValues),
+        columnValues: JSON.stringify(columnValues),
       }
     );
 
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ item: created.create_subitem }),
+      body: JSON.stringify({ success: true }),
     };
   } catch (err) {
     return {
