@@ -358,6 +358,7 @@
       statusBox.className = 'status';
 
       const template = currentTemplate();
+      const itemOption = itemSelect.options[itemSelect.selectedIndex];
       const fieldValues = {};
       (template && template.fields ? template.fields : []).forEach((f) => {
         const el = document.getElementById('field_' + f.id);
