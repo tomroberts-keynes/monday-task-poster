@@ -134,6 +134,38 @@
   .status.show { display: block; }
   .status.ok { background: var(--accent-soft); color: var(--accent); }
   .status.err { background: #f7e4de; color: var(--error); }
+
+  .checkbox-list {
+    max-height: 220px;
+    overflow-y: auto;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: #fff;
+  }
+
+  .checkbox-list label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    font-size: 15px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--ink);
+    cursor: pointer;
+    border-bottom: 1px solid #f0efe9;
+  }
+
+  .checkbox-list label:last-child { border-bottom: none; }
+  .checkbox-list label:hover { background: var(--accent-soft); }
+
+  .checkbox-list input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+  }
 </style>
 </head>
 <body>
@@ -160,8 +192,8 @@
         <div class="field-group" id="fieldsContainer"></div>
       </div>
       <div class="row">
-        <label for="assignee">Assignee</label>
-        <select id="assignee" required><option value="">Loading team…</option></select>
+        <label>Assignee(s)</label>
+        <div class="checkbox-list" id="assigneeList">Loading team…</div>
       </div>
       <div class="row">
         <label for="dueDate">Due date</label>
@@ -182,7 +214,7 @@
     const templateNote = document.getElementById('templateNote');
     const fieldsRow = document.getElementById('fieldsRow');
     const fieldsContainer = document.getElementById('fieldsContainer');
-    const assigneeSelect = document.getElementById('assignee');
+    const assigneeList = document.getElementById('assigneeList');
     const dueDateInput = document.getElementById('dueDate');
     const form = document.getElementById('taskForm');
     const submitBtn = document.getElementById('submitBtn');
@@ -214,6 +246,26 @@
       });
     }
 
+    function fillAssigneeCheckboxes(users) {
+      assigneeList.innerHTML = '';
+      users.forEach((u) => {
+        const label = document.createElement('label');
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.value = u.id;
+        cb.name = 'assignee';
+        label.appendChild(cb);
+        label.appendChild(document.createTextNode(u.name));
+        assigneeList.appendChild(label);
+      });
+    }
+
+    function getSelectedAssigneeIds() {
+      return Array.from(assigneeList.querySelectorAll('input[type="checkbox"]:checked')).map(
+        (cb) => cb.value
+      );
+    }
+
     function showStatus(kind, html) {
       statusBox.className = 'status show ' + kind;
       statusBox.innerHTML = html;
@@ -233,11 +285,7 @@
           data.clients.map((c) => ({ id: c.id, label: c.title })),
           'Select a client'
         );
-        fillSelect(
-          assigneeSelect,
-          data.assignees.map((u) => ({ id: u.id, label: u.name })),
-          'Select an assignee'
-        );
+        fillAssigneeCheckboxes(data.assignees.map((u) => ({ id: u.id, name: u.name })));
       } catch (err) {
         showStatus('err', 'Could not load form data: ' + err.message);
       }
@@ -365,6 +413,14 @@
         if (el) fieldValues[f.id] = el.value;
       });
 
+      const assigneeIds = getSelectedAssigneeIds();
+      if (assigneeIds.length === 0) {
+        showStatus('err', 'Pick at least one assignee.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Post to Monday';
+        return;
+      }
+
       try {
         const res = await fetch('/api/create-task', {
           method: 'POST',
@@ -374,7 +430,7 @@
             categoryKey: currentCategoryKey,
             templateKey: template ? template.key : 'custom',
             fields: fieldValues,
-            assigneeId: assigneeSelect.value,
+            assigneeIds: assigneeIds,
             dueDate: dueDateInput.value,
           }),
         });
@@ -382,7 +438,7 @@
         if (!res.ok) throw new Error(data.error || 'Something went wrong');
 
         showStatus('ok', 'Posted update on: <strong>' + itemOption.textContent + '</strong>');
-        assigneeSelect.selectedIndex = 0;
+        assigneeList.querySelectorAll('input[type="checkbox"]').forEach((cb) => (cb.checked = false));
         dueDateInput.value = '';
         renderFields();
       } catch (err) {
