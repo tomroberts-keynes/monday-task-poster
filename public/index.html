@@ -140,7 +140,7 @@
   <div class="sheet">
     <div class="ticket-number" id="ticketNumber">TICKET —</div>
     <h1>New task request</h1>
-    <p class="subhead">Pick the client and item, then the matching template. Fields adjust to whichever template you choose.</p>
+    <p class="subhead">Pick the client and item, then the matching template. Fields adjust to whichever template you choose. This posts an update on the item and sets its Assignee, Due Date, and Status.</p>
 
     <form id="taskForm">
       <div class="row">
@@ -337,6 +337,7 @@
           input.rows = f.size === 'large' ? 8 : 2;
           input.addEventListener('input', () => autoGrow(input));
         }
+        if (f.required) input.required = true;
         input.id = 'field_' + f.id;
         input.name = f.id;
         wrap.appendChild(input);
@@ -371,7 +372,6 @@
             parentItemId: itemSelect.value,
             categoryKey: currentCategoryKey,
             templateKey: template ? template.key : 'custom',
-            templateLabel: template ? template.label : 'New task',
             fields: fieldValues,
             assigneeId: assigneeSelect.value,
             dueDate: dueDateInput.value,
@@ -380,7 +380,7 @@
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Something went wrong');
 
-        showStatus('ok', 'Posted subitem: <strong>' + data.item.name + '</strong>');
+        showStatus('ok', 'Posted update on: <strong>' + itemOption.textContent + '</strong>');
         assigneeSelect.selectedIndex = 0;
         dueDateInput.value = '';
         renderFields();
