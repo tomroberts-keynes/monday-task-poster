@@ -52,11 +52,11 @@ exports.handler = async function (event) {
       categoryKey,
       templateKey,
       fields,
-      assigneeId,
+      assigneeIds,
       dueDate,
     } = JSON.parse(event.body);
 
-    if (!parentItemId || !assigneeId || !dueDate || !templateKey) {
+    if (!parentItemId || !assigneeIds || !assigneeIds.length || !dueDate || !templateKey) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Missing required field' }) };
     }
 
@@ -86,7 +86,9 @@ exports.handler = async function (event) {
 
     const today = new Date().toISOString().slice(0, 10);
     const columnValues = {
-      [config.itemColumnIds.assignee]: { personsAndTeams: [{ id: Number(assigneeId), kind: 'person' }] },
+      [config.itemColumnIds.assignee]: {
+        personsAndTeams: assigneeIds.map((id) => ({ id: Number(id), kind: 'person' })),
+      },
       [config.itemColumnIds.submissionDate]: { date: today },
       [config.itemColumnIds.dueDate]: { date: dueDate },
       [config.itemColumnIds.status]: { label: config.defaultStatus },
